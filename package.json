@@ -1,0 +1,106 @@
+{
+  "name": "portal-cultural-niteroi",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "firebase": "^10.12.2",
+    "lucide-react": "^0.395.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "vite": "^5.3.1"
+  }
+}
+```eof
+
+### 2. `index.html`
+*(A porta de entrada do site)*
+```html:index.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal Cultural Niterói</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```eof
+
+### 3. `vite.config.js`
+*(Configuração do construtor)*
+```javascript:vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+```eof
+
+### 4. `tailwind.config.js`
+*(Configuração do design e cores)*
+```javascript:tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```eof
+
+### 5. `postcss.config.js`
+*(Auxiliar do Tailwind)*
+```javascript:postcss.config.js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```eof
+
+### 6. `src/main.jsx`
+*(Atenção aqui: ao criar no GitHub, digite `src/main.jsx` para ele criar a pasta `src` automaticamente)*
+```react:src/main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+```eof
+
+### 7. `src/index.css`
+*(Os estilos do Tailwind)*
+```css:src/index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```eof
+
+### 8. `src/App.jsx`
+*(O cérebro de tudo, já com o SEU Firebase!)*
