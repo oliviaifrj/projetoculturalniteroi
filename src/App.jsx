@@ -29,7 +29,7 @@ const ADMIN_EMAIL = 'admin@portalculturalniteroi.com';
 // ==========================================
 // 2. FUNÇÕES UTILITÁRIAS E REGRAS DE TEMPO
 // ==========================================
-const LOGO_URL = "https://raw.githubusercontent.com/oliviaifrj/projetotcc/main/Projeto%20Cultural%20Niter%C3%B3i/src/assets/f19a20fe8267b1ae417ca0b547fd656760a37f9d.png";
+const LOGO_URL = "https://i.ibb.co/Ndy0fgDs/ce6e3ae7-066a-412f-afd0-f12b8075418c.png";
 
 const gerarCodigoUnico = () => Math.random().toString(36).substring(2, 10).toUpperCase();
 const gerarCodigoPix = () => `00020126580014BR.GOV.BCB.PIX0136${gerarCodigoUnico()}-${gerarCodigoUnico()}520400005303986540510.005802BR5916PORTAL CULTURAL6009NITEROI62070503***6304${gerarCodigoUnico()}`;
@@ -48,14 +48,19 @@ const obterStatusEvento = (evento) => {
   const agora = new Date();
   const dataEvento = parseDataHora(evento.date, evento.time);
   
-  // Se não tem data limite de venda, a venda acaba na hora do evento
+  // Considera a data e hora de TÉRMINO (se houver) para dizer que o evento acabou
+  const dataFimEvento = (evento.endDate && evento.endTime)
+    ? parseDataHora(evento.endDate, evento.endTime)
+    : dataEvento;
+  
+  // Se não tem data limite de venda, a venda acaba na hora do INÍCIO do evento
   const dataVenda = (evento.saleEndDate && evento.saleEndTime) 
     ? parseDataHora(evento.saleEndDate, evento.saleEndTime) 
     : dataEvento;
     
   const ingressosDisponiveis = evento.capacity - (evento.soldTickets || 0);
 
-  if (dataEvento < agora) return { status: 'passado', texto: 'Encerrado', bloqueado: true };
+  if (dataFimEvento < agora) return { status: 'passado', texto: 'Encerrado', bloqueado: true };
   if (!evento.isOpenEvent && ingressosDisponiveis <= 0) return { status: 'esgotado', texto: 'Esgotado', bloqueado: true };
   if (!evento.isOpenEvent && dataVenda < agora) return { status: 'vendas_encerradas', texto: 'Vendas Encerradas', bloqueado: true };
 
@@ -280,13 +285,17 @@ const CartaoEvento = ({ evento, navegarPara }) => {
 const PaginaInicial = ({ eventos, navegarPara }) => {
   const agora = new Date();
   
-  // Prepara os eventos adicionando o objeto Date para facilitar a ordenação
-  const eventosOrdenados = eventos.map(e => ({ ...e, dataRef: parseDataHora(e.date, e.time) }));
+  // Prepara os eventos adicionando o objeto Date de Início e de Fim
+  const eventosOrdenados = eventos.map(e => {
+    const dataInicio = parseDataHora(e.date, e.time);
+    const dataFim = (e.endDate && e.endTime) ? parseDataHora(e.endDate, e.endTime) : dataInicio;
+    return { ...e, dataRef: dataInicio, dataFimRef: dataFim };
+  });
 
-  // Separação Lógica
-  const destaques = eventosOrdenados.filter(e => e.isFeatured && e.dataRef >= agora);
-  const proximos = eventosOrdenados.filter(e => e.dataRef >= agora && !e.isFeatured).sort((a,b) => a.dataRef - b.dataRef);
-  const passados = eventosOrdenados.filter(e => e.dataRef < agora).sort((a,b) => b.dataRef - a.dataRef);
+  // Separação Lógica: Um evento só passa a ser "Histórico" se a data FINAL dele já passou
+  const destaques = eventosOrdenados.filter(e => e.isFeatured && e.dataFimRef >= agora);
+  const proximos = eventosOrdenados.filter(e => e.dataFimRef >= agora && !e.isFeatured).sort((a,b) => a.dataRef - b.dataRef);
+  const passados = eventosOrdenados.filter(e => e.dataFimRef < agora).sort((a,b) => b.dataFimRef - a.dataFimRef);
 
   return (
     <div className="space-y-12">
