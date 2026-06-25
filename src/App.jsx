@@ -8,7 +8,7 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
 import { getFirestore, collection, doc, getDoc, setDoc, getDocs, onSnapshot, addDoc, deleteDoc, updateDoc, query, where, increment, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 // ==========================================
-// 1. CONFIGURAÇÃO DO FIREBASE DA OLÍVIA/MORENNA
+// 1. CONFIGURAÇÃO DO FIREBASE
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDrNYJQY-v6f32L5HfgkWvurdohVgiYRQ8",
