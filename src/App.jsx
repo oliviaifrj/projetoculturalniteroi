@@ -12,6 +12,7 @@ import { getFirestore, collection, doc, getDoc, setDoc, getDocs, onSnapshot, add
 
 // ==========================================
 // 1. CONFIGURAÇÃO DO FIREBASE
+// Substitua estas chaves pelas chaves reais do seu projeto Firebase, se necessário.
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyDrNYJQY-v6f32L5HfgkWvurdohVgiYRQ8",
@@ -906,6 +907,15 @@ const PainelAdministrador = ({ eventos, categoriasGlobais, db }) => {
                 <input required type="text" placeholder="Local do Evento" className="col-span-2 px-4 py-2 border border-[#E8DCC4] rounded-lg outline-none focus:border-[#8B5A2B]" value={dadosFormulario.location} onChange={e=>setDadosFormulario({...dadosFormulario, location: e.target.value})} />
                 <input type="url" placeholder="URL da Imagem de Capa" className="col-span-2 px-4 py-2 border border-[#E8DCC4] rounded-lg outline-none focus:border-[#8B5A2B]" value={dadosFormulario.imageUrl} onChange={e=>setDadosFormulario({...dadosFormulario, imageUrl: e.target.value})} />
                 
+                {/* Categoria do Evento (Movida para fora da bilheteria para estar sempre visível) */}
+                <div className="col-span-2 space-y-1">
+                  <label className="text-sm font-medium text-[#6B4226]">Categoria Principal</label>
+                  <select className="w-full px-4 py-2 border border-[#E8DCC4] rounded-lg outline-none focus:border-[#8B5A2B]" value={dadosFormulario.category} onChange={e=>setDadosFormulario({...dadosFormulario, category: e.target.value})}>
+                    {categoriasGlobais.length === 0 && <option value="Outros">Outros</option>}
+                    {categoriasGlobais.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
+                  </select>
+                </div>
+
                 {/* Configurações Avançadas de Ingressos/Bilheteria */}
                 <div className="col-span-2 border-t border-[#E8DCC4] pt-4 mt-2">
                   <h4 className="font-bold text-[#4A3728] mb-4">Configurações de Bilheteria</h4>
@@ -920,12 +930,6 @@ const PainelAdministrador = ({ eventos, categoriasGlobais, db }) => {
 
                   {!dadosFormulario.isOpenEvent && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className="text-sm font-medium text-[#6B4226]">Categoria Principal</label>
-                        <select className="w-full px-4 py-2 border border-[#E8DCC4] rounded-lg outline-none focus:border-[#8B5A2B]" value={dadosFormulario.category} onChange={e=>setDadosFormulario({...dadosFormulario, category: e.target.value})}>
-                          {categoriasGlobais.length === 0 && <option value="Outros">Outros</option>}
-                          {categoriasGlobais.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
-                        </select>
-                      </div>
                       <div><label className="text-sm font-medium text-[#6B4226]">Capacidade Total</label><input required type="number" min="1" className="w-full px-4 py-2 border border-[#E8DCC4] rounded-lg outline-none" value={dadosFormulario.capacity} onChange={e=>setDadosFormulario({...dadosFormulario, capacity: e.target.value})} /></div>
                       <div><label className="text-sm font-medium text-[#6B4226]">Valor Base (Inteira R$)</label><input required type="number" step="0.01" min="0" disabled={dadosFormulario.isFree} className="w-full px-4 py-2 border border-[#E8DCC4] rounded-lg disabled:bg-gray-100" value={dadosFormulario.price} onChange={e=>setDadosFormulario({...dadosFormulario, price: e.target.value})} /></div>
                       
